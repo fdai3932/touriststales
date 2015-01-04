@@ -5,6 +5,9 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="com.mycompany.touriststales.include.*"%>
+<%@page import="com.mycompany.touriststales.classPackage.*"%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -12,6 +15,11 @@
         <title>JSP Page test</title>
     </head>
     <body>
+        <%
+            DB test = new DB();
+        %>
+        <%= test.debbug %>
+        <%= test.err %>
         <h1>Hello World!</h1>
     </body>
 </html>
