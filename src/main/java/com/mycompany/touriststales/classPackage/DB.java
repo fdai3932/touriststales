@@ -47,7 +47,7 @@ public class DB{
         this.queryStmt = "";
         this.err = "";
         this.debbug =  this.debbug + "DB Contructor...<br/>";
-        
+        /*
         try{
             Class.forName("com.mysql.jdbc.Driver");
         }catch(Exception e){
@@ -63,7 +63,7 @@ public class DB{
             this.debbug = this.debbug + "DB Contructor.getConnection n createStmt...<br/>";
        }catch(SQLException e){
            this.err = "GetConnection and CreateStmt: " + e.getMessage() + ".<br/>";
-       }
+       }*/
     }
     
     //This method must be static, and must return an instance of the object if the object
