@@ -15,14 +15,14 @@
     </head>
     <body>
         <%
-            DB test = new DB();
-            Author testauthor = Author.construct_guest();
-            String user_name = testauthor.getUser_Name();
+            //DB test = new DB();
+            //Author testauthor = Author.construct_guest();
+            String user_name = "testauthor.getUser_Name()";
         %>
         
         <%= user_name %>
-        <%= test.debbug %>
-        <%= test.err %>
+        <%//= test.debbug %>
+        <%//= test.err %>
         <h1>Hello World!</h1>
     </body>
 </html>
