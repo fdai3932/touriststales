@@ -29,6 +29,7 @@ public class DB{
     private final String user = "root";
     private final String password = "root";
     private final String dbName = "touriststales";
+    //private final String dbHost = "localhost";
     private final String dbHost = "54.148.37.252";
     
     private Connection conn = null;
@@ -48,14 +49,14 @@ public class DB{
         this.debbug =  this.debbug + "DB Contructor...<br/>";
         
         try{
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            Class.forName("com.mysql.jdbc.Driver");
         }catch(Exception e){
            this.err = "com.mysql.jdbc.Driver: new Instance " + e.getMessage() + ".<br/>";
         }
         
         try{    
             this.conn = DriverManager.getConnection(
-                    "jdbc:mysql://" + this.dbHost + ":3306/" + this.dbName
+                    "jdbc:mysqld://" + this.dbHost + ":3306/" + this.dbName
                     , this.user
                     , this.password);
             this.stmt = conn.createStatement();

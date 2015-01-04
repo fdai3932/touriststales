@@ -15,12 +15,11 @@
     </head>
     <body>
         <%
-            String teststr = "calling bd()";
             DB test = new DB();
             Author testauthor = Author.construct_guest();
             String user_name = testauthor.getUser_Name();
         %>
-        <%= teststr %>
+        
         <%= user_name %>
         <%= test.debbug %>
         <%= test.err %>
