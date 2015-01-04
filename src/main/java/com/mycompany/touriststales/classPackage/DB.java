@@ -4,14 +4,14 @@
  * and open the template in the editor.
  */
 
-package com.mycompany.touriststales.include;
+package com.mycompany.touriststales.classPackage;
 import com.mycompany.touriststales.classPackage.*;
 //import org.apache.commons.lang.StringEscapeUtils;
 
+import java.sql.*;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;
-import java.sql.*;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Date;
@@ -67,12 +67,7 @@ public class DB{
     
     //This method must be static, and must return an instance of the object if the object
     //does not already exist.
-    public static DB getInstance() {
-        if (! (DB.instance instanceof DB) ) {
-            DB.instance = new DB();
-        }
-        return DB.instance;
-    }
+    
     
     private String getLastInsertedID(){
         String insertID = "";

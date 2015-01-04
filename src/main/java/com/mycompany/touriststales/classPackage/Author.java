@@ -62,4 +62,7 @@ public class Author {
                 ,"");
     }
     
+    public String getUser_Name(){
+        return this.user_name;
+    }
 }

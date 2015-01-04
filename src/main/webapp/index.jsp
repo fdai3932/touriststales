@@ -5,19 +5,23 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="com.mycompany.touriststales.include.*"%>
-<%@page import="com.mycompany.touriststales.classPackage.*"%>
+<%@page import="com.mycompany.touriststales.classPackage.*;"%>
 
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page test</title>
+        <title>Tourists Tales</title>
     </head>
     <body>
         <%
+            String teststr = "calling bd()";
             DB test = new DB();
+            Author testauthor = Author.construct_guest();
+            String user_name = testauthor.getUser_Name();
         %>
+        <%= teststr %>
+        <%= user_name %>
         <%= test.debbug %>
         <%= test.err %>
         <h1>Hello World!</h1>
