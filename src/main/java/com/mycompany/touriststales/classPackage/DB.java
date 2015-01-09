@@ -26,14 +26,14 @@ public class DB{
     private static DB instance = null;
     
     // DB connection config vars
-    /*private final String user = "root";
+    //private final String user = "root";
     private final String password = "root";
-    private final String dbName = "touriststales";
-    private final String dbHost = "54.148.37.252";*/
+    //private final String dbName = "touriststales";
+    private final String dbHost = "54.148.37.252";
     private final String user = "root";
-    private final String password = "";
+    //private final String password = "";
     private final String dbName = "touriststales";
-    private final String dbHost = "localhost";
+    //private final String dbHost = "localhost";
     
     private Connection conn = null;
     private Statement stmt = null;
@@ -43,14 +43,6 @@ public class DB{
     // debbug variable 
     public String err = "";
     public String debbug = "";
-    
-    
-    static public void main(String[] args){
-        
-       DB myDb = new DB();
-       System.out.println("test succes");
-               
-    }
     //   
     public DB(){
         this.queryStmt = "";
