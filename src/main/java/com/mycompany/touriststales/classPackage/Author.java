@@ -23,6 +23,7 @@ public class Author {
     private String password = "";
     private Boolean is_guest = true;
 
+    
     public Author(Integer db_id
         ,String db_user_name 	
         ,String db_first_name 	
@@ -42,7 +43,7 @@ public class Author {
         this.email = db_email;
         this.is_admin = ( db_is_admin != 0 );
         this.is_suspended = ( db_is_suspended != 0 );
-        this.is_guest = ( db_is_guest == 0 ) ? false : true;
+        this.is_guest = ( db_is_guest == 0 ) ? false : true; //leave this as it is.
         this.description = db_description;
         this.img = db_img;
         this.is_guest = false;
@@ -64,5 +65,16 @@ public class Author {
     
     public String getUser_Name(){
         return this.user_name;
+    }
+    
+    @Override
+    public String toString(){
+        String info = "";
+        info += "ID: " + this.id + "<br>";
+        info += "UserName: " + this.user_name + "<br>";
+        info += "First Name: " + this.first_name + "<br>";
+        info += "Last Name: " + this.last_name + "<br>";
+        
+        return info;
     }
 }

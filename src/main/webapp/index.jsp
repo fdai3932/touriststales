@@ -18,6 +18,16 @@
             DB test = new DB();
             //Author testauthor = Author.construct_guest();
             String user_name = "testauthor.getUser_Name()";
+            try{
+                Review [] reviews = test.get_reviews_by_tale_id("11");
+                int i=0;
+                while(i<reviews.length)
+                    user_name += reviews[i].toString();
+            }catch(Exception e){
+                test.err += "<br>index error: " + e.getMessage();
+            }
+            
+                
         %>
         
         <%= user_name %>
