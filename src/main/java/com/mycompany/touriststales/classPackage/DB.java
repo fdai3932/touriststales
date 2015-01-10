@@ -416,7 +416,8 @@ public class DB{
         Integer numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
         
         this.err += "after this.stmt.executeQuery(this.queryStmt)<br>";
-         // comments array
+
+        // comments array
         Review [] review_by_tale = new Review[numberOfReturnedRows];
 		
         if (numberOfReturnedRows == 0) {
