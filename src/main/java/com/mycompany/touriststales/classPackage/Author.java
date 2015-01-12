@@ -6,6 +6,8 @@
 
 package com.mycompany.touriststales.classPackage;
 
+import java.sql.SQLException;
+
 /**
  *
  * @author Achille
@@ -14,14 +16,15 @@ public class Author {
     private Integer id = -1;
     private Boolean is_admin = false;
     private Boolean is_suspended = false;
-    private String user_name = "Guest";
-    private String first_name = "Jane";
-    private String last_name = "Doe";
-    private String email = "";
-    private String description = "";
-    private String img = null;
-    private String password = "";
+    private String user_name;
+    private String first_name;
+    private String last_name;
+    private String email;
+    private String description;
+    private String img = "";
+    private String password;
     private Boolean is_guest = true;
+    private DB myDB;
 
     
     public Author(Integer db_id
@@ -47,8 +50,10 @@ public class Author {
         this.description = db_description;
         this.img = db_img;
         this.is_guest = false;
-    }
         
+        this.myDB = DB.getInstance();
+    }
+    
     public static Author construct_guest(){  
         return new Author(-1
                 ,"guest" 	
@@ -65,6 +70,65 @@ public class Author {
     
     public String getUser_Name(){
         return this.user_name;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public Boolean isIs_admin() {
+        return is_admin;
+    }
+
+    public Boolean isIs_suspended() {
+        return is_suspended;
+    }
+
+    public String getUser_name() {
+        return user_name;
+    }
+
+    public String getFirst_name() {
+        return first_name;
+    }
+
+    public String getLast_name() {
+        return last_name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public Boolean isIs_guest() {
+        return is_guest;
+    }
+    
+    /*ADD METHODS*/
+    public void add_bookmark(Review review) throws Exception, SQLException{
+        if (this.is_guest) {
+            throw new Exception("Author is a guest. Guest author cannot add bookmark");
+        }
+       // this.add_bookmark_by_review_id(review->get_id());
+        this.myDB.add_bookmark_by_review_id(Integer.toString(this.id)
+                , Integer.toString(review.getId()) );
+    }
+    
+    /*CREATE METHODS*/
+    public Tale create_tale(String title, String text) throws Exception{
+        return this.myDB.create_tale(Integer.toString(this.id), title, text);
     }
     
     @Override

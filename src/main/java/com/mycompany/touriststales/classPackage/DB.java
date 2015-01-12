@@ -44,10 +44,13 @@ public class DB{
     public String err = "";
     public String debbug = "";
     //   
-    public DB(){
+    
+    private Integer numberOfReturnedRows;
+    
+    private DB(){
         this.queryStmt = "";
-        this.err += "In DB()<br>";
-        this.debbug =  this.debbug + "DB Contructor...<br/>";
+        this.err += "Err In DB()<br>";
+        this.debbug =  this.debbug + "Debbug DB Contructor...<br/>";
         
         try{
             Class.forName("com.mysql.jdbc.Driver");
@@ -64,14 +67,18 @@ public class DB{
                     , this.password);
             this.stmt = conn.createStatement();
             this.debbug = this.debbug + "DB Contructor.getConnection n createStmt...<br/>";
-       }catch(SQLException e){
-           this.err += "GetConnection and CreateStmt: " + e.getMessage() + ".<br/>";
-       }
+        }catch(SQLException e){
+            this.err += "GetConnection and CreateStmt: " + e.getMessage() + ".<br/>";
+        }
+        
+        this.numberOfReturnedRows = -1;
     }
     
     //This method must be static, and must return an instance of the object if the object
     //does not already exist.
-    public static DB getInstance() {
+//     synchronized insures that per the same instance will only be use in ONE thread at a time
+    public static synchronized DB getInstance() {
+//        if ( (DB.instance == null) ) {
         if (! (DB.instance instanceof DB) ) {
             DB.instance = new DB();
         }
@@ -94,20 +101,20 @@ public class DB{
         return insertedID;
     }
     
-    private int getResultRowsNumber(String query){
+    private int getResultRowsNumber(String queryStmt){
         int numberOfRows = 0;
         try{
             if(this.queryResult.last()) {
-                this.err += "in getResultRowsNumberquery(" + query + "): this.queryResult.last() is TRUE.<br/>";
+                this.err += "in getResultRowsNumberquery(" + queryStmt + "): this.queryResult.last() is TRUE.<br/>";
                 numberOfRows = this.queryResult.getRow();
                 this.queryResult.beforeFirst();
             }
-            else this.err += "in getResultRowsNumber(" + query + "): this.queryResult.last() is FALSE.<br/>";
+            else this.err += "in getResultRowsNumber(" + queryStmt + "): this.queryResult.last() is FALSE.<br/>";
         }catch(SQLException e){
-            this.err += "executeQuery(getNumbersOfRows(" + query + ")): " + this.err + e.getMessage() + ".<br/>";
+            this.err += "executeQuery(getNumbersOfRows(" + queryStmt + ")): " + this.err + e.getMessage() + ".<br/>";
         }
         
-        this.err += "this.getResultRowsNumber(" + query + ") = " + numberOfRows + "<br>";
+        this.err += "this.getResultRowsNumber(" + queryStmt + ") = " + numberOfRows + "<br>";
         
         return numberOfRows;
     }
@@ -137,7 +144,7 @@ public class DB{
         this.queryStmt = "SELECT * FROM authors WHERE email='" + email + "'";
         this.queryResult = this.stmt.executeQuery(this.queryStmt);
         
-        Integer numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
         
         if (numberOfReturnedRows < 0) {
             throw new Exception("Email already taken");
@@ -210,20 +217,65 @@ public class DB{
         return this.get_review_by_id(this.getLastInsertedID());
     }
     
-    /*ADD METHODS*/
-    //add_bookmark_by_review_id
-    
+    public Tale create_tale(String author_id, String title, String text) throws Exception{
+        DateFormat timeFormat = new SimpleDateFormat("'H:i:s'");
+        DateFormat dateFormat = new SimpleDateFormat("Y-m-d");
+        Date currentDate = new Date();
+        String time = timeFormat.format(currentDate);
+        String date = dateFormat.format(currentDate);
+        
+        this.queryStmt = "INSERT INTO tales (author_id, title, text, time, date)" +
+                " VALUES (" + author_id + ",'" + title + "','" + text + "',CURTIME(),CURDATE())";
+        // Insert author into database
+        this.stmt.executeUpdate(this.queryStmt);
+        
+        // Get the auto incremented id
+        String tale_id = this.getLastInsertedID();
+
+        // Get the tale row: the partiular tale which has just been added
+        this.queryStmt = "SELECT * FROM tales WHERE id=" + tale_id;
+        // Insert tale into database
+        this.stmt.executeQuery(this.queryStmt);
+        
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
+        if (this.numberOfReturnedRows == 0) {
+            throw new Exception("No tale with id '" + tale_id + "'");
+        }
+        
+        Tale tale = null;
+        if(this.queryResult.next()){
+            Integer db_id = this.queryResult.getInt("id");
+            Integer db_author_id = this.queryResult.getInt("author_id");
+            String db_title = this.queryResult.getString("title");
+            String db_text = this.queryResult.getString("text");
+            String db_time = this.queryResult.getTime("time").toString();
+            String db_date = this.queryResult.getDate("date").toString();
+            
+            tale = new Tale(db_id,
+                db_author_id,
+                db_title,
+                db_text,
+                db_time,
+                db_date);
+        }
+        
+        // return tale object 
+        return tale;
+        
+    }
+     
+     
     /*GET METHODS*/
     public Author get_author_by_user_name(String user_name)throws Exception{
         // Get the author row
 	//String user_name_temp = StringEscapeUtils.escapeJava(user_name);
         this.queryStmt = "SELECT * FROM authors WHERE user_name='"+user_name+"'";
         this.queryResult = this.stmt.executeQuery(this.queryStmt);
-        Integer numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
         // Construct author object
         Author author = null;//Author.construct_guest();
 		
-        if (numberOfReturnedRows == 0) {
+        if (this.numberOfReturnedRows == 0) {
             throw new Exception("No author with user name '" + user_name + "'.");
         }
         if (numberOfReturnedRows > 1) {
@@ -263,11 +315,11 @@ public class DB{
 	//String user_name_temp = StringEscapeUtils.escapeJava(user_name);
         this.queryStmt = "SELECT * FROM authors WHERE id="+id+"";
         this.queryResult = this.stmt.executeQuery(this.queryStmt);
-        Integer numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
         // Construct author object
         Author author = null;//Author.construct_guest();
 		
-        if (numberOfReturnedRows == 0) {
+        if (this.numberOfReturnedRows == 0) {
             throw new Exception("No author with id '" + id + "'.");
         }
         if (numberOfReturnedRows > 1) {
@@ -307,11 +359,11 @@ public class DB{
 	//String user_name_temp = StringEscapeUtils.escapeJava(user_name);
         this.queryStmt = "SELECT * FROM comments WHERE id="+comment_id+"";
         this.queryResult = this.stmt.executeQuery(this.queryStmt);
-        Integer numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
        
         Comment comment = null;
 		
-        if (numberOfReturnedRows == 0) {
+        if (this.numberOfReturnedRows == 0) {
             throw new Exception("No comment with id '" + comment_id + "'.");
         }
         
@@ -334,12 +386,12 @@ public class DB{
 	//String user_name_temp = StringEscapeUtils.escapeJava(user_name);
         this.queryStmt = "SELECT * FROM comments WHERE id="+id+"";
         this.queryResult = this.stmt.executeQuery(this.queryStmt);
-        Integer numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
         
         // Construct author object
         Review review = null;//Author.construct_guest();
 		
-        if (numberOfReturnedRows == 0) {
+        if (this.numberOfReturnedRows == 0) {
             throw new Exception("No author with id '" + id + "'.");
         }
         if (numberOfReturnedRows > 1) {
@@ -366,9 +418,9 @@ public class DB{
         this.queryStmt = "SELECT AVG(rating) FROM images WHERE review_id=" + review_id;
         this.queryResult = this.stmt.executeQuery(this.queryStmt);
                
-        Integer numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
 
-        if (numberOfReturnedRows == 0) {
+        if (this.numberOfReturnedRows == 0) {
             throw new Exception("No rating associated with review id: '" + review_id + "'");
         }
         
@@ -382,7 +434,7 @@ public class DB{
         this.queryStmt = "SELECT * FROM comments WHERE review_id=" + review_id;
         this.queryResult = this.stmt.executeQuery(this.queryStmt);
 
-        Integer numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
          // comments array
         Comment [] coments_by_review = new Comment[numberOfReturnedRows];//Author.construct_guest();
 		
@@ -409,21 +461,15 @@ public class DB{
     
     public Review[] get_reviews_by_tale_id(String tale_id) throws Exception{
         this.queryStmt = "SELECT * FROM reviews WHERE tale_id=" + tale_id;
-        this.queryStmt = "SELECT * FROM reviews";
-        this.err += "query String: " + this.queryStmt + "<br>";
         this.queryResult = this.stmt.executeQuery(this.queryStmt);
-
-        Integer numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
         
-        this.err += "after this.stmt.executeQuery(this.queryStmt)<br>";
-
         // comments array
-        Review [] review_by_tale = new Review[numberOfReturnedRows];
-		
-        if (numberOfReturnedRows == 0) {
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
+        if (this.numberOfReturnedRows == 0) {
             throw new Exception("Oupss! something went wrong with tale id '" + tale_id + "'.");
         }
         
+        Review [] review_by_tale = new Review[numberOfReturnedRows];
         int i = 0;
         while(this.queryResult.next()){
             Integer db_id = this.queryResult.getInt("id");
@@ -437,6 +483,8 @@ public class DB{
             String db_title = this.queryResult.getString("title");
             
             review_by_tale[i] = new Review(db_id, db_author_id, db_tale_id, db_title, db_location, db_text, db_category, db_time, db_date);
+//            review_by_tale[i] = new Review(2, 6, 5, "db_title", "db_location", "db_text", "db_category", "db_time", "db_date");
+//            review_by_tale[i] = new Review();
             i++;
         }
 
@@ -453,6 +501,27 @@ public class DB{
     
     
     /*ADD METHODS*/
+    public void add_bookmark_by_review_id(String author_id, String review_id) throws SQLException{
+        //$review_id = $taledb->real_escape_string($review_id);
+        // Check if bookmark already exists
+        this.queryStmt = "SELECT * FROM bookmarks WHERE review_id='" + 
+                review_id + "' AND author_id='" + author_id + "'";
+        this.stmt.executeQuery(this.queryStmt);
+
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
+        
+        if (numberOfReturnedRows > 0){
+            // Bookmark already exists
+        } else {
+            // Insert into bookmarks.
+            this.queryStmt = "INSERT INTO bookmarks"
+                    + "(review_id,author_id)"
+                    + "VALUES"
+                    + "('" + review_id + "','" + author_id + "')";
+            this.stmt.executeUpdate(this.queryStmt);
+        }
+    }
+       
     public Comment add_comment(String author_id, String review_id, String text) throws  Exception{
         DateFormat timeFormat = new SimpleDateFormat("'H:i:s'");
         DateFormat dateFormat = new SimpleDateFormat("Y-m-d");
@@ -511,9 +580,9 @@ public class DB{
         //get the id of all review of this tale.
         this.queryStmt = "SELECT id FROM reviews WHERE tale_id=" + tale_id;
         this.queryResult = this.stmt.executeQuery(this.queryStmt);
-        Integer numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
         
-        if (numberOfReturnedRows == 0) {
+        if (this.numberOfReturnedRows == 0) {
             throw new Exception("No review for the tale with id '" + tale_id + "'.");
         }
         

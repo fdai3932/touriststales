@@ -42,7 +42,19 @@ public class Review {
         this.time = time;
         this.date = date; 
         this.category = category; 
-        DB myDB = DB.getInstance();
+//        DB myDB = DB.getInstance();
+    }
+    
+    public Review(){
+        this.id = 1;
+        this.author_id = 2;
+        this.tale_id = 3;
+        this.title = "title";
+        this.location = "location";
+        this.text = "text";
+        this.time = "time";
+        this.date = "date"; 
+        this.category = "category"; 
     }
 
     public Integer getId() {
