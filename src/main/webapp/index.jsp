@@ -17,11 +17,11 @@
         <%
             DB test = DB.getInstance();
             //Author testauthor = Author.construct_guest();
-            String user_name = "<br>-------------------------------------------<br>";
+            String user_name = "<br>-----------------------reviews test--------------------<br>";
 //            Review [] reviews = {new Review(), new Review(2, 6, 5, "db_title", "db_location", "db_text", "db_category", "db_time", "db_date")};
 //            Comment [] comments;// = {new Review(), new Review(2, 6, 5, "db_title", "db_location", "db_text", "db_category", "db_time", "db_date")};
             try{
-                Review []reviews = test.get_reviews_by_tale_id("11");
+                Review []reviews = test.get_reviews_by_tale_id("10");
                 Comment [] comments = test.get_comments_by_review_id("15");
                 int i=0;
                 while(i<reviews.length)
