@@ -41,8 +41,6 @@
         <%= user_name %>
         <%= test.debbug %>
         <%= test.err %>
-        <%= reviews[0].toString() + "<br><br><br>" %>
-        <%= reviews[1].toString() %>
         <h1>Hello World!</h1>
     </body>
 </html>
