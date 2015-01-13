@@ -85,7 +85,7 @@ public class DB{
         return DB.instance;
     }
     
-    private String getLastInsertedID(){
+    private String getLastInsertedID() throws Exception{
         String insertedID = "-1";
         try{
             PreparedStatement getLastInsertId = this.conn.prepareStatement("SELECT LAST_INSERT_ID()");  
@@ -131,11 +131,8 @@ public class DB{
                                   String password) throws Exception{
         // Check if user name is unique
         this.queryStmt = "SELECT * FROM authors WHERE user_name='" + user_name + "'";
-        try{
-            this.queryResult = this.stmt.executeQuery(this.queryStmt);
-        }catch(SQLException SQLe){
-            this.err += "executeQuery(Select): " + this.err + SQLe.getMessage() + ".<br/>";
-        }
+        this.queryResult = this.stmt.executeQuery(this.queryStmt);
+            
         if (this.queryResult.next()) {
             throw new Exception("User name already taken");
         }
@@ -145,7 +142,6 @@ public class DB{
         this.queryResult = this.stmt.executeQuery(this.queryStmt);
         
         this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
-        
         if (numberOfReturnedRows < 0) {
             throw new Exception("Email already taken");
         }
@@ -171,7 +167,7 @@ public class DB{
         this.queryResult = this.stmt.executeQuery(this.queryStmt);
         
         // Construct author object
-        Author author = Author.construct_guest();
+        Author author = null;
         if(this.queryResult.next()){
             Integer db_id = this.queryResult.getInt("id");
             String db_user_name = this.queryResult.getString("user_name");
@@ -263,7 +259,36 @@ public class DB{
         return tale;
         
     }
-     
+    
+    /*SET METHODS*/
+    public void  set_author_description(String author_id, String text) throws Exception{
+        this.queryStmt = "UPDATE  authors SET  description = '" + text + "' WHERE id = " + author_id;
+        this.stmt.executeUpdate(this.queryStmt);
+    }
+    public void  set_author_user_name(String author_id, String user_name) throws Exception{
+        this.queryStmt = "UPDATE  authors SET  user_name = '" + user_name + "' WHERE id = " + author_id;
+        this.stmt.executeUpdate(this.queryStmt);
+    }
+    public void  set_author_last_name(String author_id, String last_name) throws Exception{
+        this.queryStmt = "UPDATE  authors SET  last_name = '" + last_name + "' WHERE id = " + author_id;
+        this.stmt.executeUpdate(this.queryStmt);
+    }
+    public void  set_author_first_name(String author_id, String first_name) throws Exception{
+        this.queryStmt = "UPDATE  authors SET  first_name = '" + first_name + "' WHERE id = " + author_id;
+        this.stmt.executeUpdate(this.queryStmt);
+    }
+    public void  set_author_email(String author_id, String email) throws Exception{
+        this.queryStmt = "UPDATE  authors SET  email = '" + email + "' WHERE id = " + author_id;
+        this.stmt.executeUpdate(this.queryStmt);
+    }
+    public void  set_author_password(String author_id, String password) throws Exception{
+        this.queryStmt = "UPDATE  authors SET  password = '" + password + "' WHERE id = " + author_id;
+        this.stmt.executeUpdate(this.queryStmt);
+    }
+    public void  set_author_is_suspended(String author_id, String is_suspended) throws Exception{
+        this.queryStmt = "UPDATE  authors SET  password = '" + is_suspended + "' WHERE id = " + author_id;
+        this.stmt.executeUpdate(this.queryStmt);
+    }
      
     /*GET METHODS*/
     public Author get_author_by_user_name(String user_name)throws Exception{
@@ -271,16 +296,17 @@ public class DB{
 	//String user_name_temp = StringEscapeUtils.escapeJava(user_name);
         this.queryStmt = "SELECT * FROM authors WHERE user_name='"+user_name+"'";
         this.queryResult = this.stmt.executeQuery(this.queryStmt);
-        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
-        // Construct author object
-        Author author = null;//Author.construct_guest();
 		
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
         if (this.numberOfReturnedRows == 0) {
             throw new Exception("No author with user name '" + user_name + "'.");
         }
         if (numberOfReturnedRows > 1) {
             throw new Exception("More than one author with user name '" + user_name + "'.");
         }
+        
+        // Construct author object
+        Author author = null;//Author.construct_guest();
         if(this.queryResult.next()){
             Integer db_id = this.queryResult.getInt("id");
             String db_user_name = this.queryResult.getString("user_name");
@@ -315,16 +341,17 @@ public class DB{
 	//String user_name_temp = StringEscapeUtils.escapeJava(user_name);
         this.queryStmt = "SELECT * FROM authors WHERE id="+id+"";
         this.queryResult = this.stmt.executeQuery(this.queryStmt);
-        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
-        // Construct author object
-        Author author = null;//Author.construct_guest();
 		
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
         if (this.numberOfReturnedRows == 0) {
             throw new Exception("No author with id '" + id + "'.");
         }
         if (numberOfReturnedRows > 1) {
             throw new Exception("More than one author with id '" + id + "'.");
         }
+        
+        // Construct author object
+        Author author = null;//Author.construct_guest();
         if(this.queryResult.next()){
             Integer db_id = this.queryResult.getInt("id");
             String db_user_name = this.queryResult.getString("user_name");
@@ -354,19 +381,116 @@ public class DB{
         return author;
     }
     
+    public Author [] get_followers_by_author(String author_id) throws Exception{
+        // Get the author row
+	//String user_name_temp = StringEscapeUtils.escapeJava(user_name);
+        this.queryStmt = "SELECT * "
+                + "FROM authors "
+                + "WHERE id IN ("
+                    + "SELECT following_author_id"
+                    + "FROM followers"
+                    + "WHERE followed_author_id="
+                    + "'"+ author_id+"')";
+        this.queryResult = this.stmt.executeQuery(this.queryStmt);
+		
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
+        if (numberOfReturnedRows < 1) {
+            throw new Exception("No follower found for author with id '" + author_id + "'.");
+        }
+        
+        // Construct author object. the list of the followers
+        Author [] followers = new Author[numberOfReturnedRows];
+        int i = 0;
+        while(this.queryResult.next()){
+            Integer db_id = this.queryResult.getInt("id");
+            String db_user_name = this.queryResult.getString("user_name");
+            String db_first_name = this.queryResult.getString("first_name");
+            String db_last_name = this.queryResult.getString("last_name");
+            String db_email = this.queryResult.getString("email");
+            Integer db_is_admin = this.queryResult.getInt("is_admin");
+            Integer db_is_suspended = this.queryResult.getInt("is_suspended");
+            Integer db_is_guest = this.queryResult.getInt("is_guest");
+            String db_description = this.queryResult.getString("description");
+            String db_img = this.queryResult.getString("img");
+            String db_password = this.queryResult.getString("password");
+            
+            followers[i++] = new Author(db_id
+                            ,db_user_name 	
+                            ,db_first_name 	
+                            ,db_last_name 	
+                            ,db_email 		
+                            ,db_is_admin 	
+                            ,db_is_suspended
+                            ,db_is_guest 	
+                            ,db_description	
+                            ,db_img 			
+                            ,db_password);
+        }
+        
+        return followers;
+    }
+    
+    public Author [] get_following_by_author(String author_id) throws Exception{
+        // Get the author row
+	//String user_name_temp = StringEscapeUtils.escapeJava(user_name);
+        this.queryStmt = "SELECT * "
+                + "FROM authors "
+                + "WHERE id IN ("
+                    + "SELECT followed_author_id"
+                    + "FROM followers"
+                    + "WHERE following_author_id="
+                    + "'"+ author_id+"')";
+        this.queryResult = this.stmt.executeQuery(this.queryStmt);
+		
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
+        if (numberOfReturnedRows < 1) {
+            throw new Exception("No follower found for author with id '" + author_id + "'.");
+        }
+        
+        // Construct author object. the list of the followers
+        Author [] following = new Author[numberOfReturnedRows];
+        int i = 0;
+        while(this.queryResult.next()){
+            Integer db_id = this.queryResult.getInt("id");
+            String db_user_name = this.queryResult.getString("user_name");
+            String db_first_name = this.queryResult.getString("first_name");
+            String db_last_name = this.queryResult.getString("last_name");
+            String db_email = this.queryResult.getString("email");
+            Integer db_is_admin = this.queryResult.getInt("is_admin");
+            Integer db_is_suspended = this.queryResult.getInt("is_suspended");
+            Integer db_is_guest = this.queryResult.getInt("is_guest");
+            String db_description = this.queryResult.getString("description");
+            String db_img = this.queryResult.getString("img");
+            String db_password = this.queryResult.getString("password");
+            
+            following[i++] = new Author(db_id
+                            ,db_user_name 	
+                            ,db_first_name 	
+                            ,db_last_name 	
+                            ,db_email 		
+                            ,db_is_admin 	
+                            ,db_is_suspended
+                            ,db_is_guest 	
+                            ,db_description	
+                            ,db_img 			
+                            ,db_password);
+        }
+        
+        return following;
+    }
+    
     public Comment get_comment_by_id(String comment_id)throws Exception{
         // Get the author row
 	//String user_name_temp = StringEscapeUtils.escapeJava(user_name);
         this.queryStmt = "SELECT * FROM comments WHERE id="+comment_id+"";
         this.queryResult = this.stmt.executeQuery(this.queryStmt);
-        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
-       
-        Comment comment = null;
 		
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
         if (this.numberOfReturnedRows == 0) {
             throw new Exception("No comment with id '" + comment_id + "'.");
         }
         
+        Comment comment = null;
         if(this.queryResult.next()){
             Integer db_id = this.queryResult.getInt("id");
             Integer db_author_id = this.queryResult.getInt("author_id");
@@ -386,17 +510,17 @@ public class DB{
 	//String user_name_temp = StringEscapeUtils.escapeJava(user_name);
         this.queryStmt = "SELECT * FROM comments WHERE id="+id+"";
         this.queryResult = this.stmt.executeQuery(this.queryStmt);
-        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
         
-        // Construct author object
-        Review review = null;//Author.construct_guest();
-		
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);	
         if (this.numberOfReturnedRows == 0) {
             throw new Exception("No author with id '" + id + "'.");
         }
         if (numberOfReturnedRows > 1) {
             throw new Exception("More than one author with id '" + id + "'.");
         }
+        
+        // Construct author object
+        Review review = null;//Author.construct_guest();
         if(this.queryResult.next()){
             Integer db_id = this.queryResult.getInt("id");
             Integer db_author_id = this.queryResult.getInt("author_id");
@@ -434,14 +558,14 @@ public class DB{
         this.queryStmt = "SELECT * FROM comments WHERE review_id=" + review_id;
         this.queryResult = this.stmt.executeQuery(this.queryStmt);
 
-        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
-         // comments array
-        Comment [] coments_by_review = new Comment[numberOfReturnedRows];//Author.construct_guest();
 		
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
         if (numberOfReturnedRows  == 0) {
             throw new Exception("No comment for the review with id '" + review_id + "'.");
         }
         
+         // comments array
+        Comment [] coments_by_review = new Comment[numberOfReturnedRows];//Author.construct_guest();
         int i = 0;
         while(this.queryResult.next()){
             Integer db_id = this.queryResult.getInt("id");
@@ -492,6 +616,103 @@ public class DB{
         return review_by_tale;
     }    
     
+    public Tale[] get_tales_by_author(String author_id) throws Exception{
+        this.queryStmt = "SELECT * FROM tales WHERE author_id=" + author_id;
+        this.queryResult = this.stmt.executeQuery(this.queryStmt);
+        
+        // tales array
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
+        if (this.numberOfReturnedRows < 0) {
+            throw new Exception("No tale found for author with id '" + author_id + "'.");
+        }
+        
+        Tale [] tales_by_author = new Tale[numberOfReturnedRows];
+        int i = 0;
+       while(this.queryResult.next()){
+            Integer db_id = this.queryResult.getInt("id");
+            Integer db_author_id = this.queryResult.getInt("author_id");
+            String db_title = this.queryResult.getString("title");
+            String db_text = this.queryResult.getString("text");
+            String db_time = this.queryResult.getTime("time").toString();
+            String db_date = this.queryResult.getDate("date").toString();
+            
+            tales_by_author[i++] = new Tale(db_id,
+                db_author_id,
+                db_title,
+                db_text,
+                db_time,
+                db_date);
+        }
+
+        //return array of Tales object 
+        return tales_by_author;
+    }    
+    
+    public Review [] get_bookmarks_by_author_id(String author_id) throws Exception{
+          this.queryStmt = "SELECT * "
+                + "FROM reviews "
+                + "WHERE review_id IN("
+                    + "SELECT review_id "
+                    + "FROM bookmarks "
+                    + "WHERE author_id='" + author_id + "')";
+        this.queryResult = this.stmt.executeQuery(this.queryStmt);
+        
+        // comments array
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
+        if (this.numberOfReturnedRows == 0) {
+            throw new Exception("Oupss! something went wrong with tale reviewd bookmarks from author with id '" + author_id + "'.");
+        }
+        
+        Review [] bookmarked_reviews = new Review[numberOfReturnedRows];
+        int i = 0;
+        while(this.queryResult.next()){
+            Integer db_id = this.queryResult.getInt("id");
+            Integer db_author_id = this.queryResult.getInt("author_id");
+            Integer db_tale_id = this.queryResult.getInt("tale_id");
+            String db_text = this.queryResult.getString("text");
+            String db_time = this.queryResult.getTime("time").toString();
+            String db_date = this.queryResult.getDate("date").toString();
+            String db_category = this.queryResult.getString("category");
+            String db_location = this.queryResult.getString("location");
+            String db_title = this.queryResult.getString("title");
+            
+            bookmarked_reviews[i] = new Review(db_id, db_author_id, db_tale_id
+                    , db_title, db_location, db_text, db_category, db_time, db_date);
+            i++;
+        }
+
+        //return array review object 
+        return bookmarked_reviews;
+    }
+    
+    public Comment [] get_comments_by_author(String author_id) throws Exception{
+        this.queryStmt = "SELECT * FROM comments WHERE author_id='" + author_id + "'";
+        this.queryResult = this.stmt.executeQuery(this.queryStmt);
+
+         // comments array
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
+        if (numberOfReturnedRows  == 0) {
+            throw new Exception("No comment found from the author with id '" + author_id + "'.");
+        }
+        
+        Comment [] coments_by_author = new Comment[numberOfReturnedRows];//Author.construct_guest();
+        int i = 0;
+        while(this.queryResult.next()){
+            Integer db_id = this.queryResult.getInt("id");
+            Integer db_author_id = this.queryResult.getInt("author_id");
+            Integer db_review_id = this.queryResult.getInt("review_id");
+            String db_text = this.queryResult.getString("text");
+            String db_time = this.queryResult.getTime("time").toString();
+            String db_date = this.queryResult.getDate("date").toString();
+        
+            coments_by_author[i] = new Comment(db_id, db_author_id, db_review_id, db_text, db_time, db_date);
+            i++;
+        }
+        
+        return coments_by_author;
+    } 
+            
+            
     /*UPDATE METHODS*/
     public void update_review_by_review_id(String review_id, String description) throws SQLException{
         this.queryStmt = "UPDATE reviews SET text = '" + description +
@@ -509,7 +730,6 @@ public class DB{
         this.stmt.executeQuery(this.queryStmt);
 
         this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
-        
         if (numberOfReturnedRows > 0){
             // Bookmark already exists
         } else {
@@ -592,6 +812,50 @@ public class DB{
         }
         
         this.queryStmt = "DELETE FROM tales WHERE id="+tale_id+"";
+        this.stmt.executeUpdate(this.queryStmt);
+    }
+    
+    public void delete_author_by_id(String author_id) throws Exception{
+        //get the id of all tales of this author.
+        this.queryStmt = "SELECT id FROM tales WHERE author_id ='" + author_id + "'";
+        this.queryResult = this.stmt.executeQuery(this.queryStmt);
+        
+        if (this.numberOfReturnedRows == 0) {
+            throw new Exception("No Tale found for author with id '" + author_id + "'");
+        }
+        
+        while(this.queryResult.next()){ //this could be done with WHERE IN List of ids
+            String tale_id = Integer.toString(this.queryResult.getInt("id"));
+            this.delete_tale_by_id(tale_id);
+        }
+        
+         // Delete all comments by author
+        this.queryStmt = "DELETE FROM comments WHERE author_id ='" + author_id + "'";
+        this.stmt.executeUpdate(this.queryStmt);
+        
+        // Delete all rows from followers
+        this.queryStmt = "DELETE FROM followers WHERE "
+                + "followed_author_id='" + author_id + "' OR"
+                + "following_author_id='" + author_id + "'";
+        this.stmt.executeUpdate(this.queryStmt);
+        
+        // Delete all rows from bookmarks
+        this.queryStmt = "DELETE FROM bookmarks WHERE author_id ='" + author_id + "'";
+        this.stmt.executeUpdate(this.queryStmt);
+        
+        // Remove all ratings
+        this.queryStmt = "DELETE FROM ratings WHERE author_id ='" + author_id + "'";
+        this.stmt.executeUpdate(this.queryStmt);
+
+        // Goodbye author
+        this.queryStmt = "DELETE FROM authors WHERE author_id ='" + author_id + "'";
+        this.stmt.executeUpdate(this.queryStmt);
+    }
+    
+    public void remove_bookmark_by_review_id(String author_id, String review_id) throws Exception{
+        this.queryStmt = "DELETE FROM bookmarks "
+                + "WHERE author_id='" + author_id + "' AND"
+                + "review_id='" + review_id + "'";
         this.stmt.executeUpdate(this.queryStmt);
     }
     

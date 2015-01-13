@@ -68,6 +68,7 @@ public class Author {
                 ,"");
     }
     
+    /*GET METHODS*/
     public String getUser_Name(){
         return this.user_name;
     }
@@ -116,6 +117,85 @@ public class Author {
         return is_guest;
     }
     
+    public Review [] get_bookmarks() throws Exception{
+        if (this.is_guest) {
+            throw new Exception("Author is a guest");
+        }
+        
+        return this.myDB.get_bookmarks_by_author_id(Integer.toString(this.id));
+    }
+    
+    public Comment [] get_comments() throws Exception{
+        if (this.is_guest) {
+            throw new Exception("Author is a guest");
+        }
+        
+        return this.myDB.get_comments_by_author(Integer.toString(this.id));
+    }
+    
+    public Author [] get_followers() throws Exception{
+        if (this.is_guest) {
+            throw new Exception("Author is a guest");
+        }
+        
+        return this.myDB.get_followers_by_author(Integer.toString(this.id));
+    }
+    
+    public Author [] get_following() throws Exception{
+        if (this.is_guest) {
+            throw new Exception("Author is a guest");
+        }
+        
+        return this.myDB.get_following_by_author(Integer.toString(this.id));
+    }
+    
+    public Tale [] get_tables() throws Exception{
+        if (this.is_guest) {
+            throw new Exception("Author is a guest");
+        }
+        
+        return this.myDB.get_tales_by_author(Integer.toString(this.id));
+    }
+    
+    /*SET METHODS*/
+    public void setIs_suspended(Boolean is_suspended) throws Exception {
+        this.is_suspended = ( is_suspended != false );
+        String is_suspended_str = "0";
+        if(is_suspended) is_suspended_str = "1";
+        else is_suspended_str = "0";
+        this.myDB.set_author_is_suspended(Integer.toString(this.id), is_suspended_str);
+    }
+
+    public void setUser_name(String user_name) throws Exception{
+        
+        this.user_name = user_name;
+    }
+
+    public void setFirst_name(String first_name) throws Exception {
+        this.myDB.set_author_first_name(Integer.toString(this.id), first_name);
+        this.first_name = first_name;
+    }
+
+    public void setLast_name(String last_name) throws Exception {
+        this.myDB.set_author_last_name(Integer.toString(this.id), last_name);
+        this.last_name = last_name;
+    }
+
+    public void setEmail(String email) throws Exception {
+        this.myDB.set_author_email(Integer.toString(this.id), email);
+        this.email = email;
+    }
+
+    public void setDescription(String description)throws Exception{
+        this.myDB.set_author_description(Integer.toString(this.id), description);
+        this.description = description;
+    }
+
+    public void setPassword(String password) throws Exception {
+        this.myDB.set_author_password(Integer.toString(this.id), password);
+        this.password = password;
+    }
+    
     /*ADD METHODS*/
     public void add_bookmark(Review review) throws Exception, SQLException{
         if (this.is_guest) {
@@ -129,6 +209,19 @@ public class Author {
     /*CREATE METHODS*/
     public Tale create_tale(String title, String text) throws Exception{
         return this.myDB.create_tale(Integer.toString(this.id), title, text);
+    }
+    
+    /*DELETE AUTHOR*/
+    public void delete_author_from_database() throws Exception{
+        if (this.is_guest) {
+            throw new Exception("Author is a guest");
+        }
+        
+        this.myDB.delete_author_by_id(Integer.toString(this.id));
+    }
+    
+    public void remove_bookmark_by_review_id(String review_id) throws Exception{
+        this.myDB.remove_bookmark_by_review_id(Integer.toString(this.id), review_id);
     }
     
     @Override
