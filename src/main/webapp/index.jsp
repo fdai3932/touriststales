@@ -18,13 +18,19 @@
             DB test = DB.getInstance();
             //Author testauthor = Author.construct_guest();
             String user_name = "<br>-------------------------------------------<br>";
-            Review [] reviews = {new Review(), new Review(2, 6, 5, "db_title", "db_location", "db_text", "db_category", "db_time", "db_date")};
+//            Review [] reviews = {new Review(), new Review(2, 6, 5, "db_title", "db_location", "db_text", "db_category", "db_time", "db_date")};
+//            Comment [] comments;// = {new Review(), new Review(2, 6, 5, "db_title", "db_location", "db_text", "db_category", "db_time", "db_date")};
             try{
-//                Review [] reviews = test.get_reviews_by_tale_id("11");
-//                Comment [] reviews = test.get_comments_by_review_id("15");
+                Review []reviews = test.get_reviews_by_tale_id("11");
+                Comment [] comments = test.get_comments_by_review_id("15");
                 int i=0;
-                while(i<2)
+                while(i<reviews.length)
                     user_name += reviews[i++].toString();
+                    
+                user_name += "<br>------------------comments--------<br>";
+                i=0;
+                while(i<comments.length)
+                    user_name += comments[i++].toString();
             }catch(Exception e){
                 test.err += "<br>index error: " + e.getMessage();
                 test.debbug += "<br>index debbug: " + e.getMessage();
