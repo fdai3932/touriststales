@@ -42,7 +42,8 @@ public class Review {
         this.time = time;
         this.date = date; 
         this.category = category; 
-//        DB myDB = DB.getInstance();
+        this.myDB = DB.getInstance();
+        
     }
     
     public Review(){
@@ -55,6 +56,7 @@ public class Review {
         this.time = "time";
         this.date = "date"; 
         this.category = "category"; 
+        this.myDB = DB.getInstance();
     }
 
     public Integer getId() {
@@ -64,7 +66,7 @@ public class Review {
     public Author getAuthor() throws Exception{
         return this.myDB.get_author_by_id(Integer.toString(this.author_id));
     }
-
+    
     public Integer getTale_id() {
         return tale_id;
     }
@@ -86,6 +88,10 @@ public class Review {
 
     public String getDate() {
         return date;
+    }
+    
+    public Integer getAuthorID() {
+        return author_id;
     }
     
     public Integer getRating() throws Exception{

@@ -46,7 +46,7 @@
                 echo += "        <div class='jumbotron' style='background-image:url(https://docs.google.com/drawings/d/1cxEkUOIjaCkUYtgYfcmeruIqTva884itD0MzeY5OvIM/pub?w=1389&amp;h=719);'>";
                 echo += "            <h1>Tell your tale</h1><br>";
                 echo += "            <p>Sign up and tell your tales!</p>";
-                echo += "            <p><a href='createAuthor.php' class='btn btn-primary btn-lg' role='button'>Sign Up</a></p>";
+                //echo += "            <p><a href='createAuthor.php' class='btn btn-primary btn-lg' role='button'>Sign Up</a></p>";
                 echo += "        </div>";
             }
         %>

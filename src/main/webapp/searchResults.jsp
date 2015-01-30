@@ -25,7 +25,7 @@
         <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css">
         <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
 
-        <title>travel tales</title>
+        <title>Search Result</title>
     </head>
     <body>
         <!-- Navigation Bar -->
@@ -85,7 +85,7 @@
                         String review_category = review.getCategory();
 
                         echo += "<div class='jumbotron'>";
-                        echo += "	<h2><span class='label label-default'>" + Integer.toString(i) +"</span>" + review_title + "</h2>";
+                        echo += "	<h2><span class='label label-default'>" + Integer.toString(i+1) +"</span>" + review_title + "</h2>";
                         echo += "	<p>" + review_category + "</p>";
                         echo += "	<form action='viewReview.jsp'>";
                         echo += "		<input type='hidden' name='id' value='" + review_id + "'/>";
@@ -101,12 +101,12 @@
                 }
             } catch (Exception ex) {
                 response.sendRedirect("error.jsp?errorMsg=" + ex.getMessage() + "<br>----------------------------<br>" + errorMsg + "|" + echo);
-               // die();
+               return;
             }
         } else {
             errorMsg +=  "request.getMethod() != 'GET'";
             response.sendRedirect("error.jsp?errorMsg=" + errorMsg + "|" + echo);
-            //die();
+            return;
         }
         
         %>
