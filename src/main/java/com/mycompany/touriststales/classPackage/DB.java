@@ -5,7 +5,6 @@
  */
 
 package com.mycompany.touriststales.classPackage;
-import com.mycompany.touriststales.classPackage.*;
 //import org.apache.commons.lang.StringEscapeUtils;
 
 import java.sql.*;
@@ -614,7 +613,106 @@ public class DB{
 
         //return array review object 
         return review_by_tale;
-    }    
+    }
+    
+    public Review[] get_n_reviews_by_cathegory(int n, String category) throws Exception{
+        this.queryStmt = "SELECT * FROM reviews WHERE category='" 
+                + category + "' ORDER BY date DESC LIMIT " + Integer.toString(n);
+        
+        this.queryResult = this.stmt.executeQuery(this.queryStmt);
+        
+        // comments array
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
+        if (this.numberOfReturnedRows == 0) {
+            throw new Exception("Oupss! something went wrong while trying to get all reviews. I think no review matched your search category: " + category);
+        }
+        
+        Review [] allReviews = new Review[numberOfReturnedRows];
+        int i = 0;
+        while(this.queryResult.next()){
+            Integer db_id = this.queryResult.getInt("id");
+            Integer db_author_id = this.queryResult.getInt("author_id");
+            Integer db_tale_id = this.queryResult.getInt("tale_id");
+            String db_text = this.queryResult.getString("text");
+            String db_time = this.queryResult.getTime("time").toString();
+            String db_date = this.queryResult.getDate("date").toString();
+            String db_category = this.queryResult.getString("category");
+            String db_location = this.queryResult.getString("location");
+            String db_title = this.queryResult.getString("title");
+            
+            allReviews[i] = new Review(db_id, db_author_id, db_tale_id, db_title, db_location, db_text, db_category, db_time, db_date);
+            i++;
+        }
+
+        //return array review object 
+        return allReviews;
+    }
+    
+    public Review[] get_n_reviews_by_term(int n, String term) throws Exception{
+        this.queryStmt = "SELECT * FROM reviews WHERE category LIKE '%" 
+                + term + "%' OR text LIKE '%" 
+                + term + "%' OR location LIKE '%" 
+                + term + "%' OR title LIKE '%"
+                + term + "%' ORDER BY date DESC LIMIT " + Integer.toString(n);
+        this.queryResult = this.stmt.executeQuery(this.queryStmt);
+        
+        // comments array
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
+        if (this.numberOfReturnedRows == 0) {
+            throw new Exception("Oupss! something went wrong while trying to get all reviews. I think no review matched your criteria: " + term);
+        }
+        
+        Review [] allReviews = new Review[numberOfReturnedRows];
+        int i = 0;
+        while(this.queryResult.next()){
+            Integer db_id = this.queryResult.getInt("id");
+            Integer db_author_id = this.queryResult.getInt("author_id");
+            Integer db_tale_id = this.queryResult.getInt("tale_id");
+            String db_text = this.queryResult.getString("text");
+            String db_time = this.queryResult.getTime("time").toString();
+            String db_date = this.queryResult.getDate("date").toString();
+            String db_category = this.queryResult.getString("category");
+            String db_location = this.queryResult.getString("location");
+            String db_title = this.queryResult.getString("title");
+            
+            allReviews[i] = new Review(db_id, db_author_id, db_tale_id, db_title, db_location, db_text, db_category, db_time, db_date);
+            i++;
+        }
+
+        //return array review object 
+        return allReviews;
+    }
+    
+    public Review[] get_n_reviews(int n) throws Exception{
+        this.queryStmt = "SELECT * FROM reviews ORDER BY date DESC LIMIT " + Integer.toString(n);
+        this.queryResult = this.stmt.executeQuery(this.queryStmt);
+        
+        // comments array
+        this.numberOfReturnedRows = this.getResultRowsNumber(this.queryStmt);
+        if (this.numberOfReturnedRows == 0) {
+            throw new Exception("Oupss! something went wrong while trying to get all reviews. That is weird");
+        }
+        
+        Review [] allReviews = new Review[numberOfReturnedRows];
+        int i = 0;
+        while(this.queryResult.next()){
+            Integer db_id = this.queryResult.getInt("id");
+            Integer db_author_id = this.queryResult.getInt("author_id");
+            Integer db_tale_id = this.queryResult.getInt("tale_id");
+            String db_text = this.queryResult.getString("text");
+            String db_time = this.queryResult.getTime("time").toString();
+            String db_date = this.queryResult.getDate("date").toString();
+            String db_category = this.queryResult.getString("category");
+            String db_location = this.queryResult.getString("location");
+            String db_title = this.queryResult.getString("title");
+            
+            allReviews[i] = new Review(db_id, db_author_id, db_tale_id, db_title, db_location, db_text, db_category, db_time, db_date);
+            i++;
+        }
+
+        //return array review object 
+        return allReviews;
+    }
     
     public Tale[] get_tales_by_author(String author_id) throws Exception{
         this.queryStmt = "SELECT * FROM tales WHERE author_id=" + author_id;

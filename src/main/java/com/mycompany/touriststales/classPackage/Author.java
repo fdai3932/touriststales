@@ -49,7 +49,6 @@ public class Author {
         this.is_guest = ( db_is_guest == 0 ) ? false : true; //leave this as it is.
         this.description = db_description;
         this.img = db_img;
-        this.is_guest = false;
         
         this.myDB = DB.getInstance();
     }
@@ -69,19 +68,15 @@ public class Author {
     }
     
     /*GET METHODS*/
-    public String getUser_Name(){
-        return this.user_name;
-    }
-
     public Integer getId() {
         return id;
     }
 
-    public Boolean isIs_admin() {
+    public Boolean is_admin() {
         return is_admin;
     }
 
-    public Boolean isIs_suspended() {
+    public Boolean is_suspended() {
         return is_suspended;
     }
 
@@ -113,7 +108,7 @@ public class Author {
         return password;
     }
 
-    public Boolean isIs_guest() {
+    public Boolean is_guest() {
         return is_guest;
     }
     

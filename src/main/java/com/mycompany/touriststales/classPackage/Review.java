@@ -72,7 +72,14 @@ public class Review {
     public String getText() {
         return text;
     }
-
+    
+    public String getCategory() {
+        return category;
+    }
+    
+    public String getTitle() {
+        return title;
+    }
     public String getTime() {
         return time;
     }
