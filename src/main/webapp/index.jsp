@@ -25,7 +25,7 @@
         <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css">
         <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
 
-        <title>travel tales</title>
+        <title>travel tales index</title>
     </head>
     <body>
         <%= Library.generate_nav_bar(active_author)%>
@@ -38,8 +38,8 @@
                 echo += "        <div class='jumbotron' style='background-image:url(https://docs.google.com/drawings/d/1cxEkUOIjaCkUYtgYfcmeruIqTva884itD0MzeY5OvIM/pub?w=1389&amp;h=719);'>";
                 echo += "            <h1>Tell your tale</h1><br>";
                 echo += "            <p>Create a tale and share it with others!</p>";
-                echo += "            <form action='tellTale.php'>";
-                echo += "            <button type='submit' class='btn btn-primary btn-lg'>Create Tale</button>";
+                echo += "            <form action='tellTale.jsp'>";
+                echo += "            <button type='submit' class='btn btn-primary btn-lg'>Create Tale (not implemented)</button>";
                 echo += "            </form>";
                 echo += "        </div>";
             } else {

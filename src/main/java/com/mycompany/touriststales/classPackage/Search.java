@@ -82,7 +82,6 @@ public class Search {
      */
     public  Search get_recent_reviews( int amount) throws Exception
     {
-        int i = 0;
          if(amount <= 0) {
             throw new Exception ("Amount of reviews specified is <= 0");
          }

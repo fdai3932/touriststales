@@ -46,7 +46,7 @@ public class DB{
     
     private Integer numberOfReturnedRows;
     
-    private DB(){
+    public DB(){
         this.queryStmt = "";
         this.err += "Err In DB()<br>";
         this.debbug =  this.debbug + "Debbug DB Contructor...<br/>";
