@@ -28,9 +28,9 @@ public class Review {
             Integer author_id,
             Integer tale_id,
             String title,
+            String location,
             String text,
             String category,
-            String location,
             String time,
             String date){
         this.id = id;

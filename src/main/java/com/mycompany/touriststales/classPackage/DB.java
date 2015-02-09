@@ -28,11 +28,11 @@ public class DB{
     
     // DB connection config vars
     private final String user = "root";
-    private final String password = "root";
     private final String dbName = "touriststales";
-    private final String dbHost = "54.148.37.252";
-//    private final String password = "";
-  //  private final String dbHost = "localhost";
+    //private final String password = "root";
+    //private final String dbHost = "54.148.37.252";
+    private final String password = "";
+    private final String dbHost = "localhost";
     
     private Connection conn = null;
     private Statement stmt = null;
@@ -71,6 +71,7 @@ public class DB{
         }
         
         this.numberOfReturnedRows = -1;
+        this.instance = this;
     }
     
     //This method must be static, and must return an instance of the object if the object
@@ -857,8 +858,7 @@ public class DB{
             String db_location = this.queryResult.getString("location");
             String db_title = this.queryResult.getString("title");
             
-            bookmarked_reviews[i] = new Review(db_id, db_author_id, db_tale_id
-                    , db_title, db_location, db_text, db_category, db_time, db_date);
+            bookmarked_reviews[i] = new Review(db_id, db_author_id, db_tale_id, db_title, db_location, db_text, db_category, db_time, db_date);
             i++;
         }
 
