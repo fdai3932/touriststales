@@ -37,10 +37,13 @@ public class DBTest {
         DB expResult = new DB();
         DB result = DB.getInstance();
         
-        System.err.println("DBTEST: " + result.err);
-        System.err.println("DBTESTexpResult: " + expResult.err);
+        System.err.println("If the instantiation of the object work fine, "
+                + "expresult and result should be the same object");
         
-        assertSame(expResult, result); //expResult and Result muss refer to the same object
+        assertSame(expResult, result); //both expResult and Result should refer to the same object
+        
+        System.err.println("result.tostring(): " + result.toString());
+        System.err.println("expResult.tostring(): " + expResult.toString());
         
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
