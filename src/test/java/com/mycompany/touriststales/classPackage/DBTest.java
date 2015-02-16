@@ -33,7 +33,8 @@ public class DBTest {
      */
     @Test
     public void testGetInstance() {
-        System.out.println("Output for demo");
+        System.out.println("demo pipeline.");
+        System.out.println("DBTest: GetInstance");
         DB expResult = new DB();
         DB result = DB.getInstance();
         
