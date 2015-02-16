@@ -25,7 +25,7 @@
         <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css">
         <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
 
-        <title>travel tales 12.Feb.2015</title>
+        <title>travel tales</title>
     </head>
     <body>
         <%= Library.generate_nav_bar(active_author)%>

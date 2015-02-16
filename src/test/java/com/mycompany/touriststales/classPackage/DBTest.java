@@ -33,12 +33,11 @@ public class DBTest {
      */
     @Test
     public void testGetInstance() {
-        System.out.println("BDTEst: getInstance");
+        System.out.println("BDTEst: getInstance - demo");
         DB expResult = new DB();
         DB result = DB.getInstance();
         
-        System.err.println("If the instantiation of the object work fine, "
-                + "expresult and result should be the same object");
+        System.err.println("If the instantiation of the object work fine, expresult and result should be the same object");
         
         assertSame(expResult, result); //both expResult and Result should refer to the same object
         
