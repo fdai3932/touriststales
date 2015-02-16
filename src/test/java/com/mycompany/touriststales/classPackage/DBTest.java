@@ -45,7 +45,7 @@ public class DBTest {
         System.err.println("result.tostring(): " + result.toString());
         System.err.println("expResult.tostring(): " + expResult.toString());
         
-        // TODO review the generated test code and remove the default call to fail.
+        // TODO review the generated test code  and remove the default call to fail.
         //fail("The test case is a prototype.");
     }
 
