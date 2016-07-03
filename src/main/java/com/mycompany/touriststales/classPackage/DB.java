@@ -30,7 +30,7 @@ public class DB{
     private final String user = "root";
     private final String dbName = "touriststales";
     private final String password = "root";
-    private final String dbHost = "54.148.37.252";
+    private final String dbHost = "52.37.234.253";
 //    private final String password = "";
 //    private final String dbHost = "localhost";
     
