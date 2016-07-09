@@ -33,7 +33,7 @@ public class DBTest {
      */
     @Test
     public void testGetInstance() {
-        System.out.println("demo for Kolloquim.");
+        System.out.println("demo for Kolloquim test2.");
         System.out.println("DBTest: GetInstance");
         DB expResult = new DB();
         DB result = DB.getInstance();
