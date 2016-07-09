@@ -29,8 +29,8 @@ public class DB{
     // DB connection config vars
     private final String user = "root";
     private final String dbName = "touriststales";
-    private final String password = "root";
-    private final String dbHost = "52.37.234.253";
+    private final String password = "";
+    private final String dbHost = "localhost";
 //    private final String password = "";
 //    private final String dbHost = "localhost";
     
